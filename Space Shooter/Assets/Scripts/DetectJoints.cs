@@ -102,8 +102,6 @@ public class DetectJoints : MonoBehaviour
 			_isShooting = false;
 			break;
 		}
-		if(_isShooting)
-			Debug.Log ("Is shooting!");
 	}
 
 	public float GetPosX()
