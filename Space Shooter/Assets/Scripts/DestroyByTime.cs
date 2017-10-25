@@ -2,17 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DestroyByTime : MonoBehaviour {
+public class DestroyByTime : MonoBehaviour
+{
+    public float lifetime;
 
-	public float lifetime;
-
-	// Use this for initialization
-	void Start () {
-		Destroy (gameObject, lifetime);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    void Start ()
+    {
+        Destroy(gameObject, lifetime);
+    }
 }
