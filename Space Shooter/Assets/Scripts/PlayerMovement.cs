@@ -28,7 +28,6 @@ public class PlayerMovement : MonoBehaviour {
 
 	void FixedUpdate()
 	{
-		//The tracking is ok but there's need of scaling factor
 		float h = bodyManager.GetPosX (); //Input.GetAxis ("Horizontal");
 		float v = bodyManager.GetPosY(); //Input.GetAxis ("Vertical");
 		double wingSpan = bodyManager.GetWingspan();

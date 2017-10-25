@@ -86,7 +86,7 @@ public class GameController : MonoBehaviour
 
     public void GameOver ()
     {
-        gameOverText.text = "SAGAPW kai as xaneis sto paixnidi :*!";
+        gameOverText.text = "Game Over!";
         gameOver = true;
     }
 }

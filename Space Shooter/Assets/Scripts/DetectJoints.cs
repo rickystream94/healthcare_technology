@@ -53,9 +53,7 @@ public class DetectJoints : MonoBehaviour
 
 				if (_Data [0].IsTracked && !_isCalibrated) {
 					wingSpan = CalculateWingspan (_Data [0]);
-					Debug.Log ("Got wingspan: " + wingSpan);
 					_isCalibrated = true;
-					Debug.Log ("Is Calibrated: " + _isCalibrated);
 				}
 				TrackJoint ();
 
