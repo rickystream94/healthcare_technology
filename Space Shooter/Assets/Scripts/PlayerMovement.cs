@@ -18,8 +18,6 @@ public class PlayerMovement : MonoBehaviour {
 	private Rigidbody rigidBody;
 	private Vector3 movement;
 	private Camera mainCamera;
-	private float vertExtent;
-	private float horzExtent;
 
 	void Start () {
 		rigidBody = GetComponent<Rigidbody> ();
