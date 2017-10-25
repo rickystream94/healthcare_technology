@@ -12,7 +12,8 @@ public class PlayerMovement : MonoBehaviour {
 	public float speed;
 	public float tilt;
 	public DetectJoints bodyManager;
-	public float MULTIPLIER;
+	public float AXIS_MULTIPLIER;
+	public float VERTICAL_OFFSET;
 
 	private Rigidbody rigidBody;
 	private Vector3 movement;
@@ -30,7 +31,9 @@ public class PlayerMovement : MonoBehaviour {
 		//The tracking is ok but there's need of scaling factor
 		float h = bodyManager.GetPosX (); //Input.GetAxis ("Horizontal");
 		float v = bodyManager.GetPosY(); //Input.GetAxis ("Vertical");
-		movement = new Vector3(h*MULTIPLIER, 0, v*MULTIPLIER);
+		double wingSpan = bodyManager.GetWingspan();
+		float normalizedH = wingSpan != 0 ? h / (float)wingSpan : h;
+		movement = new Vector3(normalizedH*AXIS_MULTIPLIER, 0, v*AXIS_MULTIPLIER-VERTICAL_OFFSET);
 		rigidBody.velocity = movement * speed;
 		rigidBody.position = new Vector3 (
 			Mathf.Clamp(rigidBody.position.x,boundary.xMin,boundary.xMax),
