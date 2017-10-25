@@ -1,43 +1,92 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 
-public class GameController : MonoBehaviour {
+public class GameController : MonoBehaviour
+{
+    public GameObject[] hazards;
+    public Vector3 spawnValues;
+    public int hazardCount;
+    public float spawnWait;
+    public float startWait;
+    public float waveWait;
+    public DetectJoints detectJoints;
 
-	public GameObject hazard;
-	public Vector3 spawnValues;
-	public float hazardCount;
-	public float spawnRate;
-	public float spawnStart;
-	public float waveWait;
-	public DetectJoints detectJoints;
+    public GUIText scoreText;
+    public GUIText restartText;
+    public GUIText gameOverText;
+    private bool gameOver;
+    private bool restart;
 
-	// Use this for initialization
-	void Start () {
-		StartCoroutine (SpawnWaves ());
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	}
 
-	IEnumerator SpawnWaves()
-	{
-		//Wait for calibration
-		while (!detectJoints.IsCalibrated ()) {
-			yield return new WaitForSeconds (1);
-		}
+    private int score;
 
-		yield return new WaitForSeconds (spawnStart);
-		while (true) {
-			for (int i = 0; i < hazardCount; i++) {
-				Vector3 spawnPosition = new Vector3 (Random.Range (-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
-				Quaternion spawnRotation = Quaternion.identity;
-				Instantiate (hazard, spawnPosition, spawnRotation);
-				yield return new WaitForSeconds (spawnRate);
-			}
-			yield return new WaitForSeconds (waveWait);
-		}
-	}
+    void Start ()
+    {
+        gameOver = false;
+        restart = false;
+        restartText.text = "";
+        gameOverText.text = "";
+        score = 0;
+        UpdateScore();
+        StartCoroutine (SpawnWaves ());
+    }
+
+    void Update()
+    {
+        if (restart)
+        {
+            if (Input.GetKeyDown (KeyCode.R))
+            {
+                Application.LoadLevel (Application.loadedLevel);
+            }
+        }
+    }
+
+    IEnumerator SpawnWaves ()
+    {
+        //Wait for calibration
+        while (!detectJoints.IsCalibrated())
+        {
+            yield return new WaitForSeconds(1);
+        }
+
+        yield return new WaitForSeconds(startWait);
+        while (true)
+        {
+            for (int i = 0; i < hazardCount; i++)
+            {
+                GameObject hazard = hazards[Random.Range(0, hazards.Length)];
+                Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
+                Quaternion spawnRotation = Quaternion.identity;
+                Instantiate(hazard, spawnPosition, spawnRotation);
+                yield return new WaitForSeconds(spawnWait);
+            }
+            yield return new WaitForSeconds (waveWait);
+
+            if (gameOver)
+            {
+                restartText.text = "Press 'R' for Restart";
+                restart = true;
+                break;
+            }
+        }
+    }
+    
+    public void AddScore (int newScoreValue)
+    {
+        score += newScoreValue;
+        UpdateScore();
+    }
+
+    void UpdateScore ()
+    {
+        scoreText.text = "Score:" + score;
+    }
+
+    public void GameOver ()
+    {
+        gameOverText.text = "SAGAPW kai as xaneis sto paixnidi :*!";
+        gameOver = true;
+    }
 }
