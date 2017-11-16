@@ -23,6 +23,7 @@ public class EnemyController : MonoBehaviour {
 	private bool hasWaitingTime;
 	private Vector3 currentDirection;
 	private float currentWaitingTime;
+	private Dictionary<string,Color> colorDict;
 
 	// Use this for initialization
 	void Start () {
@@ -35,6 +36,12 @@ public class EnemyController : MonoBehaviour {
 		hasWaitingTime = false;
 		currentWaitingTime = 0f;
 		currentDirection = Vector3.left;
+
+		//Example of color dict based on direction
+		colorDict = new Dictionary<string,Color> ();
+		colorDict.Add ("RIGHT", Color.red);
+		colorDict.Add ("LEFT", Color.blue);
+
 		StartCoroutine (SpawnWaves ());
 	}
 
@@ -65,7 +72,7 @@ public class EnemyController : MonoBehaviour {
 		}
 	}
 
-	private void Fire()
+	void Fire()
 	{
 		//Define properties for hazard
 		GameObject hazard = hazards[Random.Range(0, hazards.Length)];
@@ -75,13 +82,25 @@ public class EnemyController : MonoBehaviour {
 		//Get instantiated object and set TargetLeg variable
 		GameObject instance = Instantiate(hazard, spawnPosition, spawnRotation);
 		Mover hazardMover = instance.GetComponent<Mover> ();
+		SetRendererProperties (instance);
 		hazardMover.TargetLeg = GetTargetLeg();
 
 		//Animate
 		animator.SetTrigger ("Fire");
 	}
 
-	private void Move(Vector3 direction)
+	//Used to set the border of the gameObject based on the targeted leg
+	void SetRendererProperties(GameObject instance)
+	{
+		Renderer renderer = instance.GetComponent<Renderer> ();
+		Color color;
+		if (!colorDict.TryGetValue (GetTargetLeg (), out color))
+			color = Color.black;
+		renderer.material.SetColor ("_OutlineColor", color);
+		renderer.material.SetFloat ("_Outline", 0.005f);
+	}
+
+	void Move(Vector3 direction)
 	{
 		isMoving = true;
 		movement = direction * speed * Time.deltaTime;
@@ -90,7 +109,7 @@ public class EnemyController : MonoBehaviour {
 		CheckIfShouldStop ();
 	}
 
-	private void CheckIfShouldStop()
+	void CheckIfShouldStop()
 	{
 		movingTimer += Time.deltaTime;
 		if (movingTimer >= moveRate) {
@@ -98,7 +117,7 @@ public class EnemyController : MonoBehaviour {
 		}
 	}
 
-	private void StayStill()
+	void StayStill()
 	{
 		waitingTimer += Time.deltaTime;
 		isMoving = false;
@@ -108,7 +127,7 @@ public class EnemyController : MonoBehaviour {
 			Restart ();
 	}
 
-	private void Restart()
+	void Restart()
 	{
 		isMoving = true;
 		hasDirection = false;
@@ -118,19 +137,19 @@ public class EnemyController : MonoBehaviour {
 		Animate (isMoving);
 	}
 
-	private void Animate(bool value)
+	void Animate(bool value)
 	{
 		animator.SetBool ("isMoving", value);
 	}
 
-	private void PickDirection()
+	void PickDirection()
 	{		
 		Vector3 newDirection = currentDirection == Vector3.left ? Vector3.right : Vector3.left;
 		currentDirection = newDirection;
 		hasDirection = true;
 	}
 
-	private void SetWaitingTime()
+	void SetWaitingTime()
 	{
 		hasWaitingTime = true;
 		currentWaitingTime = Random.Range (minWaitTime, maxWaitTime);
