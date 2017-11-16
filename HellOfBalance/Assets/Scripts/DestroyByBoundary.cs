@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class DestroyByBoundary : MonoBehaviour {
 
-	public GameObject explosion;
+	private PlayerController playerController;
+
+	void Start()
+	{
+		playerController = GameObject.FindGameObjectWithTag ("Player").GetComponent<PlayerController>();
+	}
 
 	void OnTriggerEnter(Collider other)
 	{
-		Instantiate (explosion, other.transform.position,other.transform.rotation);
+		string targetLeg = other.gameObject.GetComponent<Mover> ().TargetLeg;
+		playerController.TrackKnee (targetLeg);
 		Destroy (other.gameObject);
 	}
 }

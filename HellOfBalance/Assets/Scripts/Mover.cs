@@ -4,27 +4,22 @@ using UnityEngine;
 
 public class Mover : MonoBehaviour {
 
-	public float speed;
+	private Rigidbody rigidBody;
+	private float tumble;
+	private float speed;
 
-	private Rigidbody rigidbody;
-	private float timer;
-	private float delay = 0.5f;
-	private float rotationSpeed;
+	public string TargetLeg { get; set; }
 
 	// Use this for initialization
 	void Start () {
-		rigidbody = GetComponent<Rigidbody> ();
-		timer = 0f;
-		rotationSpeed = 4f;
+		rigidBody = GetComponent<Rigidbody> ();
+		speed = 0.5f;
+		tumble = 4f;
+		rigidBody.angularVelocity = Random.insideUnitSphere * tumble;
 	}
 
 	void Update()
 	{
-		timer += Time.deltaTime;
-		if (timer >= delay)
-		{
-			rigidbody.velocity = transform.forward * -speed;
-			transform.Rotate (0, 0, Random.Range (0, 90) * Time.deltaTime * rotationSpeed);
-		}
+		rigidBody.velocity = Vector3.forward * -speed;
 	}
 }
