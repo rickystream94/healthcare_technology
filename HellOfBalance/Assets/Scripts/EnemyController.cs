@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Assets.Scripts;
+using System.Collections;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour {
@@ -12,8 +12,12 @@ public class EnemyController : MonoBehaviour {
 	public float speed;
 	public float minWaitTime;
 	public float maxWaitTime;
+    public const string RIGHT_LEG_NAME = "LEG_RIGHT";
+    public const string LEFT_LEG_NAME = "LEG_LEFT";
+    public const string RIGHT_TILT_NAME = "TILT_RIGHT";
+    public const string LEFT_TILT_NAME = "TILT_LEFT";
 
-	private float waitingTimer;
+    private float waitingTimer;
 	private float movingTimer;
 	private Animator animator;
 	private Rigidbody enemyRigidBody;
@@ -23,10 +27,10 @@ public class EnemyController : MonoBehaviour {
 	private bool hasWaitingTime;
 	private Vector3 currentDirection;
 	private float currentWaitingTime;
-	private Dictionary<string,Color> colorDict;
+    private ColorManager colorManager;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 		waitingTimer = 0f;
 		movingTimer = 0f;
 		animator = GetComponentInChildren<Animator> ();
@@ -36,13 +40,9 @@ public class EnemyController : MonoBehaviour {
 		hasWaitingTime = false;
 		currentWaitingTime = 0f;
 		currentDirection = Vector3.left;
+        colorManager = ColorManager.Instance;
 
-		//Example of color dict based on direction
-		colorDict = new Dictionary<string,Color> ();
-		colorDict.Add ("RIGHT", Color.red);
-		colorDict.Add ("LEFT", Color.blue);
-
-		StartCoroutine (SpawnWaves ());
+		StartCoroutine (SpawnHazards ());
 	}
 
 	void FixedUpdate()
@@ -57,7 +57,7 @@ public class EnemyController : MonoBehaviour {
 			StayStill ();
 	}
 
-	IEnumerator SpawnWaves ()
+	IEnumerator SpawnHazards ()
 	{
 		yield return new WaitForSeconds(moveRate);
 		while (true)
@@ -74,9 +74,11 @@ public class EnemyController : MonoBehaviour {
 
 	void Fire()
 	{
-		//Define properties for hazard
-		GameObject hazard = hazards[Random.Range(0, hazards.Length)];
-		Vector3 spawnPosition = new Vector3 (gameObject.transform.position.x, gameObject.transform.position.y + 0.05f, gameObject.transform.position.z - 0.2f);
+        //Get random hazard
+        GameObject hazard = hazards[Random.Range(0, hazards.Length)];
+
+        //Define properties for hazard
+        Vector3 spawnPosition = new Vector3 (gameObject.transform.position.x, gameObject.transform.position.y + 0.05f, gameObject.transform.position.z - 0.2f);
 		Quaternion spawnRotation = Quaternion.identity;
 
 		//Get instantiated object and set TargetLeg variable
@@ -93,9 +95,8 @@ public class EnemyController : MonoBehaviour {
 	void SetRendererProperties(GameObject instance)
 	{
 		Renderer renderer = instance.GetComponent<Renderer> ();
-		Color color;
-		if (!colorDict.TryGetValue (GetTargetLeg (), out color))
-			color = Color.black;
+        Color color;
+        colorManager.GetValueFromKey(GetTargetLeg(), out color);
 		renderer.material.SetColor ("_OutlineColor", color);
 		renderer.material.SetFloat ("_Outline", 0.005f);
 	}
@@ -157,6 +158,6 @@ public class EnemyController : MonoBehaviour {
 
 	public string GetTargetLeg()
 	{
-		return currentDirection == Vector3.right ? "RIGHT" : "LEFT";
+		return currentDirection == Vector3.right ? RIGHT_LEG_NAME : LEFT_LEG_NAME;
 	}
 }

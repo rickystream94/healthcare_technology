@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour {
 		
 	}
 
-	public void TrackKnee(string targetLeg)
+	public void TrackLeg(string targetLeg)
 	{
 		KinectInterop.BodyData bodyData = kinectManager.GetUserBodyData (kinectManager.GetUserIdByIndex (userIndex));
 
@@ -37,14 +37,14 @@ public class PlayerController : MonoBehaviour {
 		float rightKneeY = rightJointData.position.y;
 		float leftKneeY = leftJointData.position.y;
 		float spineBaseY = spineBaseJointData.position.y;
-		float targetLegY = 0f;
-		KinectInterop.JointData targetJointData = rightJointData; //Init default but it will be overwritten
+		float targetLegY = -100f; //Default value (impossible to reach)
+        KinectInterop.JointData targetJointData = rightJointData; //Init default but it will be overwritten (cannot set to null)
 		switch (targetLeg) {
-		case "RIGHT":
+		case EnemyController.RIGHT_LEG_NAME:
 			targetLegY = rightKneeY;
 			targetJointData = rightJointData;
 			break;
-		case "LEFT":
+		case EnemyController.LEFT_LEG_NAME:
 			targetLegY = leftKneeY;
 			targetJointData = leftJointData;
 			break;
@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour {
 			break;
 		}
 
-		if (targetLegY != 0f) {
+		if (targetLegY != -100f) {
 			double distance = LenghtBetweenTwoJoints (targetJointData, spineBaseJointData);
 			if (targetLegY >= spineBaseY - (distance / 2))
 				Debug.Log ("AVOIDED");
