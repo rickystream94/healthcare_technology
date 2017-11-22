@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,8 +9,7 @@ public class Mover : MonoBehaviour {
 	private float tumble;
 	private float speed;
 
-	public string TargetLeg { get; set; }
-    public string TargetTilt { get; set; }
+    public BodyTarget BodyTarget { get; set; }
 
 	// Use this for initialization
 	void Start () {

@@ -45,11 +45,11 @@ public class PlayerController : MonoBehaviour
         KinectInterop.JointData targetJointData = rightKneeJointData; //Init default but it will be overwritten (cannot set to null)
         switch (targetLeg)
         {
-            case EnemyController.RIGHT_LEG_NAME:
+            case EnemyController.LEG_RIGHT:
                 targetLegY = rightKneeY;
                 targetJointData = rightKneeJointData;
                 break;
-            case EnemyController.LEFT_LEG_NAME:
+            case EnemyController.LEG_LEFT:
                 targetLegY = leftKneeY;
                 targetJointData = leftKneeJointData;
                 break;
@@ -78,9 +78,11 @@ public class PlayerController : MonoBehaviour
         KinectInterop.JointData neckJointData = bodyData.joint[(int)neckJoint];
         KinectInterop.JointData spineBaseJointData = bodyData.joint[(int)spineBaseJoint];
         double m = AngularCoefficientBetweenTwoJoints(neckJointData, spineBaseJointData);
-        double tiltingAngle = GetTiltingAngle(m, targetDirection);
+        double tiltingAngle = GetTiltingAngle(m);
         //if tiltingAngle is negative, we're inclining LEFT, otherwise RIGHT
         Debug.Log("INCLINED: " + tiltingAngle + "°");
+
+        //TODO: detect whether inclination allows to avoid or get hit
     }
 
     public static double LenghtBetweenTwoJoints(KinectInterop.JointData j1, KinectInterop.JointData j2)
@@ -93,7 +95,7 @@ public class PlayerController : MonoBehaviour
         return (double)(j1.position.y - j2.position.y) / (j1.position.x - j2.position.x);
     }
 
-    public static double GetTiltingAngle(double m, string direction)
+    public static double GetTiltingAngle(double m)
     {
         double lineAngleRadians = Math.Atan(m);
         double lineAngleDegrees = RadianToDegree(lineAngleRadians);

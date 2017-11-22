@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class EnemyController : MonoBehaviour
 {
@@ -15,11 +16,12 @@ public class EnemyController : MonoBehaviour
     public float minWaitTime;
     public float maxWaitTime;
     public Text targetValueText;
-    public const string RIGHT_LEG_NAME = "LEG_RIGHT";
-    public const string LEFT_LEG_NAME = "LEG_LEFT";
-    public const string RIGHT_TILT_NAME = "TILT_RIGHT";
-    public const string LEFT_TILT_NAME = "TILT_LEFT";
+    public const string LEG_RIGHT = "LEG_RIGHT";
+    public const string LEG_LEFT = "LEG_LEFT";
+    public const string TILT_RIGHT = "TILT_RIGHT";
+    public const string TILT_LEFT = "TILT_LEFT";
 
+    private string Target { get; set; }
     private float waitingTimer;
     private float movingTimer;
     private Animator animator;
@@ -30,7 +32,6 @@ public class EnemyController : MonoBehaviour
     private bool hasWaitingTime;
     private Vector3 currentDirection;
     private float currentWaitingTime;
-    private ColorManager colorManager;
 
     // Use this for initialization
     void Start()
@@ -44,7 +45,6 @@ public class EnemyController : MonoBehaviour
         hasWaitingTime = false;
         currentWaitingTime = 0f;
         currentDirection = Vector3.left;
-        colorManager = ColorManager.Instance;
 
         StartCoroutine(SpawnHazards());
     }
@@ -68,7 +68,7 @@ public class EnemyController : MonoBehaviour
         {
             for (int i = 0; i < hazardCount; i++)
             {
-                if (!isMoving)
+                if (!isMoving && Target != null)
                     Fire();
                 yield return new WaitForSeconds(fireRate);
             }
@@ -79,7 +79,7 @@ public class EnemyController : MonoBehaviour
     void Fire()
     {
         //Get random hazard
-        GameObject hazard = hazards[Random.Range(0, hazards.Length)];
+        GameObject hazard = hazards[UnityEngine.Random.Range(0, hazards.Length)];
 
         //Define properties for hazard
         Vector3 spawnPosition = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y + 0.05f, gameObject.transform.position.z - 0.2f);
@@ -88,28 +88,16 @@ public class EnemyController : MonoBehaviour
         //Get instantiated object and set TargetLeg variable
         GameObject instance = Instantiate(hazard, spawnPosition, spawnRotation);
         Mover hazardMover = instance.GetComponent<Mover>();
-        Color color;
-        //TODO: instantiate also hazards for upper body tilting
-        SetRendererProperties(instance, out color);
 
-        //hazardMover.TargetLeg = GetTargetLeg();
-        hazardMover.TargetTilt = GetTargetLeg();
+        BodyTarget bodyTarget = new BodyTarget(Target, instance);
+        hazardMover.BodyTarget = bodyTarget;
 
         //Animate
         animator.SetTrigger("Fire");
 
         //Update UI
-        targetValueText.text = GetTargetLeg();
-        targetValueText.color = color;
-    }
-
-    //Used to set the border of the gameObject based on the targeted leg
-    void SetRendererProperties(GameObject instance, out Color color)
-    {
-        Renderer renderer = instance.GetComponent<Renderer>();
-        colorManager.GetValueFromKey(GetTargetLeg(), out color);
-        renderer.material.SetColor("_OutlineColor", color);
-        renderer.material.SetFloat("_Outline", 0.005f);
+        targetValueText.text = bodyTarget.Target;
+        targetValueText.color = bodyTarget.Color;
     }
 
     void Move(Vector3 direction)
@@ -160,16 +148,25 @@ public class EnemyController : MonoBehaviour
         Vector3 newDirection = currentDirection == Vector3.left ? Vector3.right : Vector3.left;
         currentDirection = newDirection;
         hasDirection = true;
+
+        //Equal probability to shoot hazards for legs or upper body
+        //Each wave of hazards will have same target
+        System.Random random = new System.Random();
+        Target = random.NextDouble() > 0.5 ? GetTargetLeg() : GetTargetTilt();
     }
 
     void SetWaitingTime()
     {
         hasWaitingTime = true;
-        currentWaitingTime = Random.Range(minWaitTime, maxWaitTime);
+        currentWaitingTime = UnityEngine.Random.Range(minWaitTime, maxWaitTime);
     }
 
     public string GetTargetLeg()
     {
-        return currentDirection == Vector3.right ? RIGHT_LEG_NAME : LEFT_LEG_NAME;
+        return currentDirection == Vector3.right ? LEG_RIGHT : LEG_LEFT;
+    }
+    private string GetTargetTilt()
+    {
+        return currentDirection == Vector3.right ? TILT_RIGHT : TILT_LEFT;
     }
 }

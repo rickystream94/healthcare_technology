@@ -21,15 +21,17 @@ namespace Assets.Scripts
         private ColorManager()
         {
             colorDict = new Dictionary<string, Color>();
-            colorDict.Add(EnemyController.RIGHT_LEG_NAME, Color.red);
-            colorDict.Add(EnemyController.LEFT_LEG_NAME, Color.blue);
-            colorDict.Add(EnemyController.RIGHT_TILT_NAME, Color.green);
-            colorDict.Add(EnemyController.LEFT_TILT_NAME, Color.magenta);
+            colorDict.Add(EnemyController.LEG_RIGHT, Color.red);
+            colorDict.Add(EnemyController.LEG_LEFT, Color.blue);
+            colorDict.Add(EnemyController.TILT_RIGHT, Color.green);
+            colorDict.Add(EnemyController.TILT_LEFT, Color.magenta);
         }
-        public void GetValueFromKey(string key, out Color value)
+        public Color GetValueFromKey(string key)
         {
-            if (!colorDict.TryGetValue(key, out value))
-                value = Color.black;
+            Color color;
+            if (!colorDict.TryGetValue(key, out color))
+                color = Color.black;
+            return color;
         }
     }
 }
