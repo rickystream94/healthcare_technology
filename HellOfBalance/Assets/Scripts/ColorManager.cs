@@ -13,9 +13,7 @@ namespace Assets.Scripts
             get
             {
                 if (_instance == null)
-                {
-                    return new ColorManager();
-                }
+                    _instance = new ColorManager();
                 return _instance;
             }
         }

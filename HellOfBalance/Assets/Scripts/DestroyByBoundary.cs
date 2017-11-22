@@ -13,8 +13,10 @@ public class DestroyByBoundary : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-		string targetLeg = other.gameObject.GetComponent<Mover> ().TargetLeg;
-		playerController.TrackLeg (targetLeg);
+        //string targetLeg = other.gameObject.GetComponent<Mover> ().TargetLeg;
+        string targetTilt = other.gameObject.GetComponent<Mover>().TargetTilt;
+        //playerController.TrackLeg (targetLeg);
+        playerController.TrackTilting(targetTilt);
 		Destroy (other.gameObject);
 	}
 }

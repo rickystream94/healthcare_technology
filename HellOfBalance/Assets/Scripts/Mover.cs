@@ -9,6 +9,7 @@ public class Mover : MonoBehaviour {
 	private float speed;
 
 	public string TargetLeg { get; set; }
+    public string TargetTilt { get; set; }
 
 	// Use this for initialization
 	void Start () {
