@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Assets.Scripts;
 
 public class PlayerController : MonoBehaviour
 {
@@ -77,37 +78,30 @@ public class PlayerController : MonoBehaviour
 
         KinectInterop.JointData neckJointData = bodyData.joint[(int)neckJoint];
         KinectInterop.JointData spineBaseJointData = bodyData.joint[(int)spineBaseJoint];
-        double m = AngularCoefficientBetweenTwoJoints(neckJointData, spineBaseJointData);
-        double tiltingAngle = GetTiltingAngle(m);
+        double m = AnglesHelper.AngularCoefficientBetweenTwoJoints(neckJointData, spineBaseJointData);
+        double tiltingAngle = AnglesHelper.GetTiltingAngle(m);
         //if tiltingAngle is negative, we're inclining LEFT, otherwise RIGHT
         Debug.Log("INCLINED: " + tiltingAngle + "°");
 
-        //TODO: detect whether inclination allows to avoid or get hit
+        double minimumTiltingAngle;
+        bool isAvoided;
+        if(targetDirection.Contains("LEFT"))
+        {
+            minimumTiltingAngle = -20.0;
+            isAvoided = tiltingAngle < minimumTiltingAngle;
+        } else
+        {
+            minimumTiltingAngle = 20.0;
+            isAvoided = tiltingAngle > minimumTiltingAngle;
+        }
+        if (isAvoided)
+            Debug.Log("AVOIDED");
+        else
+            Debug.Log("HIT");
     }
 
     public static double LenghtBetweenTwoJoints(KinectInterop.JointData j1, KinectInterop.JointData j2)
     {
         return Math.Sqrt(Math.Pow(j1.position.x - j2.position.x, 2) + Math.Pow(j1.position.y - j2.position.y, 2) + Math.Pow(j1.position.z - j2.position.z, 2));
-    }
-
-    public static double AngularCoefficientBetweenTwoJoints(KinectInterop.JointData j1, KinectInterop.JointData j2)
-    {
-        return (double)(j1.position.y - j2.position.y) / (j1.position.x - j2.position.x);
-    }
-
-    public static double GetTiltingAngle(double m)
-    {
-        double lineAngleRadians = Math.Atan(m);
-        double lineAngleDegrees = RadianToDegree(lineAngleRadians);
-        //lineAngleDegrees will be either positive or negative
-        if (m > 0)
-            return 90 - lineAngleDegrees;
-        else
-            return -(lineAngleDegrees + 90);
-    }
-
-    private static double RadianToDegree(double angle)
-    {
-        return angle * (180.0 / Math.PI);
     }
 }
