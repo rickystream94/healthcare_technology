@@ -14,6 +14,7 @@ namespace Assets.Scripts
         public Text scoreText;
         public Text levelUpText;
         public Image hitImage;
+        public Image bodyImage;
         public float flashSpeed = 10f;
         public Color flashColour = new Color(1f, 0f, 0f, 1f);
 
@@ -65,9 +66,11 @@ namespace Assets.Scripts
             scoreText.text = string.Format(scoreFormat, points, totalHazards, avoidedHazards);
         }
 
-        internal void ShowLevelUpText()
+        internal void UpdateBodyImage(BodyTarget bodyTarget)
         {
-            levelUpText.text = "Level Up!";
+            Color color = bodyTarget.Color;
+            //Get also type of pose
+            bodyImage.color = color;
         }
     }
 }

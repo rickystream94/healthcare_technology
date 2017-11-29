@@ -98,6 +98,7 @@ public class EnemyController : MonoBehaviour
 
         //Update UI
         uIController.UpdateTargetText(bodyTarget);
+        uIController.UpdateBodyImage(bodyTarget);
     }
 
     void Move(Vector3 direction)
