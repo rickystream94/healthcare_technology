@@ -81,10 +81,12 @@ public class PlayerController : MonoBehaviour
         if (targetLegY != -100f)
         {
             double distance = LenghtBetweenTwoJoints(targetJointData, spineBaseJointData);
-            if (targetLegY < spineBaseY - (distance / 2))
+            bool isAvoided = targetLegY >= spineBaseY - (distance / 2);
+            if (!isAvoided)
                 Hit();
             else
                 gameController.IncreaseScore();
+            gameController.AddHazard(isAvoided);
         }
     }
 
@@ -105,11 +107,12 @@ public class PlayerController : MonoBehaviour
 
         bool isAvoided;
         double minTiltingAngle = 20.0;
-        if(targetDirection.Contains("LEFT"))
+        if (targetDirection.Contains("LEFT"))
         {
             minTiltingAngle = -thresholdTiltingAngle;
             isAvoided = tiltingAngle < minTiltingAngle;
-        } else
+        }
+        else
         {
             minTiltingAngle = thresholdTiltingAngle;
             isAvoided = tiltingAngle > minTiltingAngle;
@@ -118,6 +121,7 @@ public class PlayerController : MonoBehaviour
             Hit();
         else
             gameController.IncreaseScore();
+        gameController.AddHazard(isAvoided);
     }
 
     private void Hit()

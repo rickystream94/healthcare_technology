@@ -12,13 +12,16 @@ namespace Assets.Scripts
         public Text targetText;
         public Text infoText;
         public Text scoreText;
+        public Text levelUpText;
         public Image hitImage;
-        public float flashSpeed = 5f;
-        public Color flashColour = new Color(1f, 0f, 0f, 0.1f);
+        public float flashSpeed = 10f;
+        public Color flashColour = new Color(1f, 0f, 0f, 1f);
+
+        private string scoreFormat = "Score: {0}\n\rTotal Hazards: {1}\n\rAvoided Hazards: {2}";
 
         private void Start()
         {
-            scoreText.text = "Score: 0";
+            scoreText.text = string.Format(scoreFormat, 0, 0, 0);
         }
 
         private void Update()
@@ -57,9 +60,14 @@ namespace Assets.Scripts
 
         }
 
-        internal void UpdateScoreText(int points)
+        internal void UpdateScoreText(int points, int totalHazards, int avoidedHazards)
         {
-            scoreText.text = "Score: " + points;
+            scoreText.text = string.Format(scoreFormat, points, totalHazards, avoidedHazards);
+        }
+
+        internal void ShowLevelUpText()
+        {
+            levelUpText.text = "Level Up!";
         }
     }
 }
