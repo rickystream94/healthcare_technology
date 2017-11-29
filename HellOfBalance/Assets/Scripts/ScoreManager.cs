@@ -7,17 +7,17 @@ namespace Assets.Scripts
 {
     public class ScoreManager
     {
-        public int POINTS_PER_MISSED_HAZARD = 10;
-        private int score;
+        public int basePoints = 10;
+        public int CurrentScore { get; set; }
 
         public ScoreManager()
         {
-            score = 0;
+            CurrentScore = 0;
         }
 
-        public void AddPoints(int points)
+        public void AddPoints()
         {
-            score += points;
+            CurrentScore += basePoints;
         }
     }
 }

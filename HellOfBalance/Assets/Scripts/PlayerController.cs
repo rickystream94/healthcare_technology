@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public int userIndex;
     public double thresholdTiltingAngle = 20.0;
     public UIController uIController;
+    public GameController gameController;
 
     private KinectManager kinectManager;
     private const KinectInterop.JointType rightKneeJoint = KinectInterop.JointType.KneeRight;
@@ -82,6 +83,8 @@ public class PlayerController : MonoBehaviour
             double distance = LenghtBetweenTwoJoints(targetJointData, spineBaseJointData);
             if (targetLegY < spineBaseY - (distance / 2))
                 Hit();
+            else
+                gameController.IncreaseScore();
         }
     }
 
@@ -98,7 +101,7 @@ public class PlayerController : MonoBehaviour
         double m = AnglesHelper.AngularCoefficientBetweenTwoJoints(neckJointData, spineBaseJointData);
         double tiltingAngle = AnglesHelper.GetTiltingAngle(m);
         //if tiltingAngle is negative, we're inclining LEFT, otherwise RIGHT
-        Debug.Log("INCLINED: " + tiltingAngle + "°");
+        //Debug.Log("INCLINED: " + tiltingAngle + "°");
 
         bool isAvoided;
         double minTiltingAngle = 20.0;
@@ -113,6 +116,8 @@ public class PlayerController : MonoBehaviour
         }
         if (!isAvoided)
             Hit();
+        else
+            gameController.IncreaseScore();
     }
 
     private void Hit()

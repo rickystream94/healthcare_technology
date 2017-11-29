@@ -11,13 +11,14 @@ namespace Assets.Scripts
     {
         public Text targetText;
         public Text infoText;
+        public Text scoreText;
         public Image hitImage;
         public float flashSpeed = 5f;
         public Color flashColour = new Color(1f, 0f, 0f, 0.1f);
 
         private void Start()
         {
-
+            scoreText.text = "Score: 0";
         }
 
         private void Update()
@@ -54,6 +55,11 @@ namespace Assets.Scripts
         internal void UpdateInfoText()
         {
 
+        }
+
+        internal void UpdateScoreText(int points)
+        {
+            scoreText.text = "Score: " + points;
         }
     }
 }
