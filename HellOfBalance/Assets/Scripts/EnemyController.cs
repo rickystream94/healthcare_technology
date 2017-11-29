@@ -7,15 +7,16 @@ using System;
 public class EnemyController : MonoBehaviour
 {
 
+    public UIController uIController;
+    public PlayerController playerController;
     public float fireRate;
-    public float moveRate;
+    public float enemyMovingRate;
     public GameObject[] hazards;
     public int hazardCount;
-    public float waveWait;
-    public float speed;
-    public float minWaitTime;
-    public float maxWaitTime;
-    public Text targetValueText;
+    public float playerRestTime;
+    public float enemySpeed;
+    public float minPlayerActiveTime;
+    public float maxPlayerActiveTime;
     public const string LEG_RIGHT = "LEG_RIGHT";
     public const string LEG_LEFT = "LEG_LEFT";
     public const string TILT_RIGHT = "TILT_RIGHT";
@@ -63,16 +64,16 @@ public class EnemyController : MonoBehaviour
 
     IEnumerator SpawnHazards()
     {
-        yield return new WaitForSeconds(moveRate);
+        yield return new WaitForSeconds(enemyMovingRate);
         while (true)
         {
             for (int i = 0; i < hazardCount; i++)
             {
-                if (!isMoving && Target != null)
+                if (!isMoving && Target != null && playerController.IsPlayerTracked())
                     Fire();
                 yield return new WaitForSeconds(fireRate);
             }
-            yield return new WaitForSeconds(waveWait);
+            yield return new WaitForSeconds(playerRestTime);
         }
     }
 
@@ -96,14 +97,13 @@ public class EnemyController : MonoBehaviour
         animator.SetTrigger("Fire");
 
         //Update UI
-        targetValueText.text = bodyTarget.Target;
-        targetValueText.color = bodyTarget.Color;
+        uIController.UpdateTargetText(bodyTarget);
     }
 
     void Move(Vector3 direction)
     {
         isMoving = true;
-        movement = direction * speed * Time.deltaTime;
+        movement = direction * enemySpeed * Time.deltaTime;
         enemyRigidBody.MovePosition(transform.position + movement);
         Animate(isMoving);
         CheckIfShouldStop();
@@ -112,7 +112,7 @@ public class EnemyController : MonoBehaviour
     void CheckIfShouldStop()
     {
         movingTimer += Time.deltaTime;
-        if (movingTimer >= moveRate)
+        if (movingTimer >= enemyMovingRate)
         {
             isMoving = false;
         }
@@ -158,7 +158,7 @@ public class EnemyController : MonoBehaviour
     void SetWaitingTime()
     {
         hasWaitingTime = true;
-        currentWaitingTime = UnityEngine.Random.Range(minWaitTime, maxWaitTime);
+        currentWaitingTime = UnityEngine.Random.Range(minPlayerActiveTime, maxPlayerActiveTime);
     }
 
     public string GetTargetLeg()
@@ -167,6 +167,6 @@ public class EnemyController : MonoBehaviour
     }
     private string GetTargetTilt()
     {
-        return currentDirection == Vector3.right ? TILT_RIGHT : TILT_LEFT;
+        return currentDirection == Vector3.right ? TILT_LEFT : TILT_RIGHT;
     }
 }

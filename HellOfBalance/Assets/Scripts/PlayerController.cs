@@ -3,37 +3,56 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using Assets.Scripts;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
 
     public int userIndex;
+    public double thresholdTiltingAngle = 20.0;
+    public UIController uIController;
 
     private KinectManager kinectManager;
     private const KinectInterop.JointType rightKneeJoint = KinectInterop.JointType.KneeRight;
     private const KinectInterop.JointType leftKneeJoint = KinectInterop.JointType.KneeLeft;
     private const KinectInterop.JointType spineBaseJoint = KinectInterop.JointType.SpineBase;
     private const KinectInterop.JointType neckJoint = KinectInterop.JointType.Neck;
+    private bool damaged;
 
     // Use this for initialization
     void Start()
     {
         kinectManager = KinectManager.Instance;
+        damaged = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (damaged)
+        {
+            uIController.FlashHitImage();
+        }
+        else
+        {
+            uIController.ResetFlashHitImage();
+        }
+        damaged = false;
+    }
 
+    internal bool IsPlayerTracked()
+    {
+        KinectInterop.BodyData bodyData = kinectManager.GetUserBodyData(kinectManager.GetUserIdByIndex(userIndex));
+        return !(bodyData.bIsTracked == 0);
     }
 
     public void TrackLeg(string targetLeg)
     {
-        KinectInterop.BodyData bodyData = kinectManager.GetUserBodyData(kinectManager.GetUserIdByIndex(userIndex));
-
         //Check if body is tracked, otherwise skip
-        if (bodyData.bIsTracked == 0)
+        if (!IsPlayerTracked())
             return;
+
+        KinectInterop.BodyData bodyData = kinectManager.GetUserBodyData(kinectManager.GetUserIdByIndex(userIndex));
 
         //Get joints data
         KinectInterop.JointData rightKneeJointData = bodyData.joint[(int)rightKneeJoint];
@@ -61,20 +80,18 @@ public class PlayerController : MonoBehaviour
         if (targetLegY != -100f)
         {
             double distance = LenghtBetweenTwoJoints(targetJointData, spineBaseJointData);
-            if (targetLegY >= spineBaseY - (distance / 2))
-                Debug.Log("MISSED");
-            else
-                Debug.Log("HIT");
+            if (targetLegY < spineBaseY - (distance / 2))
+                Hit();
         }
     }
 
     public void TrackTilting(string targetDirection)
     {
-        KinectInterop.BodyData bodyData = kinectManager.GetUserBodyData(kinectManager.GetUserIdByIndex(userIndex));
-
         //Check if body is tracked, otherwise skip
-        if (bodyData.bIsTracked == 0)
+        if (!IsPlayerTracked())
             return;
+
+        KinectInterop.BodyData bodyData = kinectManager.GetUserBodyData(kinectManager.GetUserIdByIndex(userIndex));
 
         KinectInterop.JointData neckJointData = bodyData.joint[(int)neckJoint];
         KinectInterop.JointData spineBaseJointData = bodyData.joint[(int)spineBaseJoint];
@@ -83,21 +100,24 @@ public class PlayerController : MonoBehaviour
         //if tiltingAngle is negative, we're inclining LEFT, otherwise RIGHT
         Debug.Log("INCLINED: " + tiltingAngle + "°");
 
-        double minimumTiltingAngle;
         bool isAvoided;
+        double minTiltingAngle = 20.0;
         if(targetDirection.Contains("LEFT"))
         {
-            minimumTiltingAngle = -20.0;
-            isAvoided = tiltingAngle < minimumTiltingAngle;
+            minTiltingAngle = -thresholdTiltingAngle;
+            isAvoided = tiltingAngle < minTiltingAngle;
         } else
         {
-            minimumTiltingAngle = 20.0;
-            isAvoided = tiltingAngle > minimumTiltingAngle;
+            minTiltingAngle = thresholdTiltingAngle;
+            isAvoided = tiltingAngle > minTiltingAngle;
         }
-        if (isAvoided)
-            Debug.Log("AVOIDED");
-        else
-            Debug.Log("HIT");
+        if (!isAvoided)
+            Hit();
+    }
+
+    private void Hit()
+    {
+        damaged = true;
     }
 
     public static double LenghtBetweenTwoJoints(KinectInterop.JointData j1, KinectInterop.JointData j2)

@@ -21,8 +21,8 @@ namespace Assets.Scripts
         private ColorManager()
         {
             colorDict = new Dictionary<string, Color>();
-            colorDict.Add(EnemyController.LEG_RIGHT, Color.red);
-            colorDict.Add(EnemyController.LEG_LEFT, Color.blue);
+            colorDict.Add(EnemyController.LEG_RIGHT, Color.yellow);
+            colorDict.Add(EnemyController.LEG_LEFT, Color.cyan);
             colorDict.Add(EnemyController.TILT_RIGHT, Color.green);
             colorDict.Add(EnemyController.TILT_LEFT, Color.magenta);
         }
