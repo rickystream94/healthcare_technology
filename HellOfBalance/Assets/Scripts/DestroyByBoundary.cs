@@ -13,7 +13,7 @@ public class DestroyByBoundary : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other)
 	{
-        string target = other.gameObject.GetComponent<Mover> ().BodyTarget.Target;
+        string target = other.gameObject.GetComponent<HazardMover> ().BodyTarget.Target;
         if(target.StartsWith("LEG"))
             playerController.TrackLeg (target);
         else if(target.StartsWith("TILT"))

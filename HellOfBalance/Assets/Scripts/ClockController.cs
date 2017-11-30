@@ -26,7 +26,7 @@ namespace Assets.Scripts
 
         void Update()
         {
-            if (timerOn && timeLeft > 0f /*&& playerController.IsPlayerTracked()*/)
+            if (timerOn && timeLeft > 0f /*&& playerController.IsPlayerTracked()*/) //TODO: remove comment to play with kinect
             {
                 //  Update countdown clock
                 timeLeft -= Time.deltaTime;

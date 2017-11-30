@@ -8,7 +8,7 @@ namespace Assets.Scripts
     public class ScoreManager
     {
         public int basePoints = 10;
-        public int CurrentScore { get; set; }
+        public int Score { get; set; }
 
         public int TotalHazardsShot { get; set; }
         public int TotalAvoidedHazards { get; set; }
@@ -21,7 +21,7 @@ namespace Assets.Scripts
 
         public ScoreManager()
         {
-            CurrentScore = 0;
+            Score = 0;
             TotalHazardsShot = 0;
             TotalAvoidedHazards = 0;
             CurrentLevelAvoidedHazards = 0;
@@ -32,13 +32,15 @@ namespace Assets.Scripts
 
         public void AddPoints()
         {
-            CurrentScore += basePoints;
+            Score += basePoints;
         }
 
         public void AddHazard(bool avoided)
         {
             CurrentLevelHazardsShot++;
+            TotalHazardsShot++;
             CurrentLevelAvoidedHazards += avoided ? 1 : 0;
+            TotalAvoidedHazards += avoided ? 1 : 0;
         }
 
         internal bool HasPassedLevel(out float ratioOfSuccess)
@@ -52,15 +54,13 @@ namespace Assets.Scripts
             levelResults.Add(levelResult);
         }
 
-        internal void AddFailedAttempt(int level,int failedAttempts)
+        internal void AddFailedAttempt(int level, int failedAttempts)
         {
             failedAttemptsPerLevel.Add(level, failedAttempts);
         }
 
         internal void LevelUp()
         {
-            TotalAvoidedHazards += CurrentLevelAvoidedHazards;
-            TotalHazardsShot += CurrentLevelHazardsShot;
             CurrentLevelHazardsShot = 0;
             CurrentLevelAvoidedHazards = 0;
         }

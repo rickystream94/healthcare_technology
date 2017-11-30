@@ -10,9 +10,10 @@ namespace Assets.Scripts
         public int Level { get; set; }
         public int FailedAttempts { get; set; }
 
-        private Dictionary<int, int> playTimePerLevel;
+        private Dictionary<int, int> playMinutesPerLevel;
         private Dictionary<int, int> maxAttemptsPerLevel;
         private Dictionary<int, float> penaltyWeightPerLevel;
+        private Dictionary<int, int> activeSecondsPerLevel;
         private const int MAX_LEVEL = 3;
 
         public LevelManager()
@@ -20,19 +21,24 @@ namespace Assets.Scripts
             Level = 1; //By default
             FailedAttempts = 0;
 
-            //Populate levels info (hardcoded for simplicity)
-            playTimePerLevel = new Dictionary<int, int>();
+            //Populate levels info (hardcoded for simplicity of the prototype implementation, but it could be stored in file/DB)
+            //TODO: adjust with real values
+            playMinutesPerLevel = new Dictionary<int, int>();
             maxAttemptsPerLevel = new Dictionary<int, int>();
             penaltyWeightPerLevel = new Dictionary<int, float>();
-            playTimePerLevel.Add(1, 5);
-            playTimePerLevel.Add(2, 8);
-            playTimePerLevel.Add(3, 10);
+            activeSecondsPerLevel = new Dictionary<int, int>();
+            playMinutesPerLevel.Add(1, 1);
+            playMinutesPerLevel.Add(2, 8);
+            playMinutesPerLevel.Add(3, 10);
             maxAttemptsPerLevel.Add(1, 5);
             maxAttemptsPerLevel.Add(2, 3);
             maxAttemptsPerLevel.Add(3, 2);
             penaltyWeightPerLevel.Add(1, 0.5f);
             penaltyWeightPerLevel.Add(2, 0.35f);
             penaltyWeightPerLevel.Add(3, 0.15f);
+            activeSecondsPerLevel.Add(1, 5);
+            activeSecondsPerLevel.Add(2, 8);
+            activeSecondsPerLevel.Add(3, 10);
         }
 
         public void LevelUp()
@@ -52,7 +58,7 @@ namespace Assets.Scripts
         public int GetPlayMinutesPerLevel(int level)
         {
             int value;
-            if (playTimePerLevel.TryGetValue(level, out value))
+            if (playMinutesPerLevel.TryGetValue(level, out value))
                 return value;
             return 0;
         }
@@ -61,6 +67,14 @@ namespace Assets.Scripts
         {
             int value;
             if (maxAttemptsPerLevel.TryGetValue(level, out value))
+                return value;
+            return 0;
+        }
+
+        public int GetActiveSecondsPerlevel(int level)
+        {
+            int value;
+            if (activeSecondsPerLevel.TryGetValue(level, out value))
                 return value;
             return 0;
         }

@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
 
     public UIController uIController;
     public ClockController clockController;
+    public EnemyController enemyController;
 
     private ScoreManager scoreManager;
     private LevelManager levelManager;
@@ -23,14 +24,14 @@ public class GameController : MonoBehaviour
         hudCanvasAnimator = GameObject.Find("HUDCanvas").GetComponent<Animator>();
         hudCanvasAnimator.SetTrigger("LevelTrigger");
         uIController.UpdateLevelText("Ready to play Level " + levelManager.Level);
+        uIController.UpdateScoreText(scoreManager.Score, scoreManager.TotalHazardsShot, scoreManager.TotalAvoidedHazards);
         clockController.RestartTimer(levelManager.GetPlayMinutesPerLevel(levelManager.Level));
+        enemyController.PlayerActiveSeconds = levelManager.GetActiveSecondsPerlevel(levelManager.Level);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Updates the score text
-        uIController.UpdateScoreText(scoreManager.CurrentScore, scoreManager.TotalHazardsShot, scoreManager.TotalAvoidedHazards);
     }
 
     public void IncreaseScore()
@@ -75,6 +76,8 @@ public class GameController : MonoBehaviour
     public void AddHazard(bool avoided)
     {
         scoreManager.AddHazard(avoided);
+        //Updates the score text
+        uIController.UpdateScoreText(scoreManager.Score, scoreManager.TotalHazardsShot, scoreManager.TotalAvoidedHazards);
     }
 
     public void LevelUp()

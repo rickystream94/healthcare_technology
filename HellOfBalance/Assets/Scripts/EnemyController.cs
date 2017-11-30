@@ -15,8 +15,7 @@ public class EnemyController : MonoBehaviour
     public int hazardsPerWave;
     public float playerRestTime;
     public float enemySpeed;
-    public float minPlayerActiveTime;
-    public float maxPlayerActiveTime;
+    public float PlayerActiveSeconds { get; set; }
     public const string LEG_RIGHT = "LEG_RIGHT";
     public const string LEG_LEFT = "LEG_LEFT";
     public const string TILT_RIGHT = "TILT_RIGHT";
@@ -69,7 +68,7 @@ public class EnemyController : MonoBehaviour
         {
             for (int i = 0; i < hazardsPerWave; i++)
             {
-                if (!isMoving && Target != null /*&& playerController.IsPlayerTracked()*/)
+                if (!isMoving && Target != null /*&& playerController.IsPlayerTracked()*/) //TODO: remove comment to play with kinect
                     Fire();
                 yield return new WaitForSeconds(fireRate);
             }
@@ -89,7 +88,7 @@ public class EnemyController : MonoBehaviour
 
         //Get instantiated object and set TargetLeg variable
         GameObject instance = Instantiate(hazard, spawnPosition, spawnRotation);
-        Mover hazardMover = instance.GetComponent<Mover>();
+        HazardMover hazardMover = instance.GetComponent<HazardMover>();
 
         BodyTarget bodyTarget = new BodyTarget(Target, instance);
         hazardMover.BodyTarget = bodyTarget;
@@ -160,7 +159,7 @@ public class EnemyController : MonoBehaviour
     void SetWaitingTime()
     {
         hasWaitingTime = true;
-        currentWaitingTime = UnityEngine.Random.Range(minPlayerActiveTime, maxPlayerActiveTime);
+        currentWaitingTime = PlayerActiveSeconds;
     }
 
     public string GetTargetLeg()
