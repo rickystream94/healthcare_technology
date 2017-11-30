@@ -12,9 +12,12 @@ namespace Assets.Scripts
         public Text targetText;
         public Text infoText;
         public Text scoreText;
-        public Text levelUpText;
         public Image hitImage;
         public Image bodyImage;
+        public Sprite legLeftSprite;
+        public Sprite rightLegSprite;
+        public Sprite tiltLeftSprite;
+        public Sprite tiltRightSprite;
         public float flashSpeed = 10f;
         public Color flashColour = new Color(1f, 0f, 0f, 1f);
 
@@ -69,8 +72,26 @@ namespace Assets.Scripts
         internal void UpdateBodyImage(BodyTarget bodyTarget)
         {
             Color color = bodyTarget.Color;
-            //Get also type of pose
             bodyImage.color = color;
+            switch (bodyTarget.Target)
+            {
+                case EnemyController.LEG_LEFT:
+                    bodyImage.sprite = legLeftSprite;
+                    break;
+                case EnemyController.LEG_RIGHT:
+                    bodyImage.sprite = rightLegSprite;
+                    break;
+                case EnemyController.TILT_LEFT:
+                    bodyImage.sprite = tiltLeftSprite;
+                    break;
+                case EnemyController.TILT_RIGHT:
+                    bodyImage.sprite = tiltRightSprite;
+                    break;
+                default:
+                    bodyImage.sprite = null;
+                    break;
+            }
+            bodyImage.SetNativeSize();
         }
     }
 }
