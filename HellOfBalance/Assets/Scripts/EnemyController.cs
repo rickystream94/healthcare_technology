@@ -12,7 +12,7 @@ public class EnemyController : MonoBehaviour
     public float fireRate;
     public float enemyMovingRate;
     public GameObject[] hazards;
-    public int hazardCount;
+    public int hazardsPerWave;
     public float playerRestTime;
     public float enemySpeed;
     public float minPlayerActiveTime;
@@ -67,12 +67,13 @@ public class EnemyController : MonoBehaviour
         yield return new WaitForSeconds(enemyMovingRate);
         while (true)
         {
-            for (int i = 0; i < hazardCount; i++)
+            for (int i = 0; i < hazardsPerWave; i++)
             {
-                if (!isMoving && Target != null && playerController.IsPlayerTracked())
+                if (!isMoving && Target != null /*&& playerController.IsPlayerTracked()*/)
                     Fire();
                 yield return new WaitForSeconds(fireRate);
             }
+            animator.SetTrigger("NewWave");
             yield return new WaitForSeconds(playerRestTime);
         }
     }

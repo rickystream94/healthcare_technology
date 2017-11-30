@@ -12,6 +12,7 @@ namespace Assets.Scripts
         public Text targetText;
         public Text infoText;
         public Text scoreText;
+        public Text levelText;
         public Image hitImage;
         public Image bodyImage;
         public Sprite legLeftSprite;
@@ -57,6 +58,11 @@ namespace Assets.Scripts
                 targetText.text = "Tilt your body " + whichDirection + "!";
             }
             targetText.color = bodyTarget.Color;
+        }
+
+        internal void UpdateLevelText(string text)
+        {
+            levelText.text = text;
         }
 
         internal void UpdateInfoText()

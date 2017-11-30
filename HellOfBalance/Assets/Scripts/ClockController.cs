@@ -10,19 +10,23 @@ namespace Assets.Scripts
     public class ClockController : MonoBehaviour
     {
         public Text timerText;
-        public int minutes = 0;
-        public int seconds = 0;
         public PlayerController playerController;
+        public GameController gameController;
+
         private float timeLeft;
+        private bool timerOn;
+        private int minutes;
+        private int seconds;
 
         void Awake()
         {
+            timerOn = false;
             timeLeft = GetInitialTime();
         }
 
         void Update()
         {
-            if (timeLeft > 0f && playerController.IsPlayerTracked())
+            if (timerOn && timeLeft > 0f /*&& playerController.IsPlayerTracked()*/)
             {
                 //  Update countdown clock
                 timeLeft -= Time.deltaTime;
@@ -36,8 +40,10 @@ namespace Assets.Scripts
                 }
                 else
                 {
-                    //  The countdown clock has finished
+                    //  The countdown clock has finished and it triggers GameController methods
                     timerText.text = "Time : 0:00";
+                    timerOn = false;
+                    gameController.CheckLevelScore();
                 }
             }
         }
@@ -57,5 +63,12 @@ namespace Assets.Scripts
             return Mathf.FloorToInt(timeLeft % 60f);
         }
 
+        public void RestartTimer(int newMinutes)
+        {
+            minutes = newMinutes;
+            seconds = 0;
+            timeLeft = GetInitialTime();
+            timerOn = true;
+        }
     }
 }

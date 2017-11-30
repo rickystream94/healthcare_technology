@@ -11,13 +11,23 @@ namespace Assets.Scripts
         public int CurrentScore { get; set; }
 
         public int TotalHazardsShot { get; set; }
-        public int AvoidedHazards { get; set; }
+        public int TotalAvoidedHazards { get; set; }
+        public int CurrentLevelHazardsShot { get; set; }
+        public int CurrentLevelAvoidedHazards { get; set; }
+
+        private float minSuccessRatio = 0.75f;
+        private List<LevelResult> levelResults;
+        private Dictionary<int, int> failedAttemptsPerLevel;
 
         public ScoreManager()
         {
             CurrentScore = 0;
             TotalHazardsShot = 0;
-            AvoidedHazards = 0;
+            TotalAvoidedHazards = 0;
+            CurrentLevelAvoidedHazards = 0;
+            CurrentLevelHazardsShot = 0;
+            levelResults = new List<LevelResult>();
+            failedAttemptsPerLevel = new Dictionary<int, int>();
         }
 
         public void AddPoints()
@@ -27,8 +37,32 @@ namespace Assets.Scripts
 
         public void AddHazard(bool avoided)
         {
-            TotalHazardsShot++;
-            AvoidedHazards += avoided ? 1 : 0;
+            CurrentLevelHazardsShot++;
+            CurrentLevelAvoidedHazards += avoided ? 1 : 0;
+        }
+
+        internal bool HasPassedLevel(out float ratioOfSuccess)
+        {
+            ratioOfSuccess = CurrentLevelAvoidedHazards * 1.0f / CurrentLevelHazardsShot;
+            return ratioOfSuccess >= minSuccessRatio;
+        }
+
+        internal void AddLevelResult(LevelResult levelResult)
+        {
+            levelResults.Add(levelResult);
+        }
+
+        internal void AddFailedAttempt(int level,int failedAttempts)
+        {
+            failedAttemptsPerLevel.Add(level, failedAttempts);
+        }
+
+        internal void LevelUp()
+        {
+            TotalAvoidedHazards += CurrentLevelAvoidedHazards;
+            TotalHazardsShot += CurrentLevelHazardsShot;
+            CurrentLevelHazardsShot = 0;
+            CurrentLevelAvoidedHazards = 0;
         }
     }
 }
