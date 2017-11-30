@@ -59,7 +59,7 @@ public class GameController : MonoBehaviour
             else
             {
                 //We have to stop playing (game-over)
-                //TODO
+                //TODO: implement gameover
             }
         }
     }
