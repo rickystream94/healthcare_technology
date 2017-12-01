@@ -12,6 +12,7 @@ namespace Assets.Scripts
         public Text timerText;
         public PlayerController playerController;
         public GameController gameController;
+        public bool isTestModeOn;
 
         private float timeLeft;
         private bool timerOn;
@@ -26,7 +27,8 @@ namespace Assets.Scripts
 
         void Update()
         {
-            if (timerOn && timeLeft > 0f /*&& playerController.IsPlayerTracked()*/) //TODO: remove comment to play with kinect
+            bool playerIsTracked = isTestModeOn ? true : playerController.IsPlayerTracked();
+            if (timerOn && timeLeft > 0f && playerIsTracked)
             {
                 //  Update countdown clock
                 timeLeft -= Time.deltaTime;

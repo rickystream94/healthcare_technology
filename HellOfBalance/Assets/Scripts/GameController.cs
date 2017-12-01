@@ -11,6 +11,8 @@ public class GameController : MonoBehaviour
     public UIController uIController;
     public ClockController clockController;
     public EnemyController enemyController;
+    public bool IsGamePlaying { get; private set; }
+    public int TotalPlayedMinutes { get; private set; }
 
     private ScoreManager scoreManager;
     private LevelManager levelManager;
@@ -27,6 +29,8 @@ public class GameController : MonoBehaviour
         uIController.UpdateScoreText(scoreManager.Score, scoreManager.TotalHazardsShot, scoreManager.TotalAvoidedHazards);
         clockController.RestartTimer(levelManager.GetPlayMinutesPerLevel(levelManager.Level));
         enemyController.PlayerActiveSeconds = levelManager.GetActiveSecondsPerlevel(levelManager.Level);
+        IsGamePlaying = true;
+        TotalPlayedMinutes = 0;
     }
 
     // Update is called once per frame
@@ -37,16 +41,18 @@ public class GameController : MonoBehaviour
     public void IncreaseScore()
     {
         scoreManager.AddPoints();
+        //Updates the score text
+        uIController.UpdateScoreText(scoreManager.Score, scoreManager.CurrentLevelHazardsShot, scoreManager.CurrentLevelAvoidedHazards);
     }
 
     internal void CheckLevelScore()
     {
-        float ratioOfSuccess;
-        bool levelPassed = scoreManager.HasPassedLevel(out ratioOfSuccess);
+        bool levelPassed = scoreManager.HasPassedLevel();
+        TotalPlayedMinutes += levelManager.GetPlayMinutesPerLevel(levelManager.Level);
         if (levelPassed)
         {
             //If the level is passed, we save the score and level up
-            scoreManager.AddLevelResult(new LevelResult(levelManager.Level, levelManager.FailedAttempts, ratioOfSuccess, levelManager.GetPlayMinutesPerLevel(levelManager.Level)));
+            scoreManager.AddLevelResult(new LevelResult(levelManager.FailedAttempts, levelManager.GetPenaltyWeightPerLevel(levelManager.Level)));
             LevelUp();
         }
         else
@@ -59,7 +65,8 @@ public class GameController : MonoBehaviour
             else
             {
                 //We have to stop playing (game-over)
-                //TODO: implement gameover
+                IsGamePlaying = false;
+                hudCanvasAnimator.SetTrigger("GameOver");
             }
         }
     }
@@ -67,6 +74,7 @@ public class GameController : MonoBehaviour
     private void RetryLevel()
     {
         levelManager.FailedAttempts++;
+        scoreManager.ResetCounters();
         int remainingAttempts = levelManager.GetMaxAttemptsPerLevel(levelManager.Level) - levelManager.FailedAttempts;
         hudCanvasAnimator.SetTrigger("LevelTrigger");
         uIController.UpdateLevelText(string.Format("That's not enough, retry!\n\rYou have {0} attempts left!", remainingAttempts));
@@ -77,18 +85,21 @@ public class GameController : MonoBehaviour
     {
         scoreManager.AddHazard(avoided);
         //Updates the score text
-        uIController.UpdateScoreText(scoreManager.Score, scoreManager.TotalHazardsShot, scoreManager.TotalAvoidedHazards);
+        uIController.UpdateScoreText(scoreManager.Score, scoreManager.CurrentLevelHazardsShot, scoreManager.CurrentLevelAvoidedHazards);
     }
 
     public void LevelUp()
     {
         levelManager.LevelUp();
         scoreManager.LevelUp();
+        enemyController.PlayerActiveSeconds = levelManager.GetActiveSecondsPerlevel(levelManager.Level);
 
         //Always check if we reached the max level
         if (levelManager.IsMaxLevelReached())
         {
-            //TODO: stop playing, calculate the final score and show summary screen
+            IsGamePlaying = false;
+            hudCanvasAnimator.SetTrigger("Win");
+            CalculateSummaryInfo();
         }
         else
         {
@@ -96,5 +107,16 @@ public class GameController : MonoBehaviour
             uIController.UpdateLevelText("Level Completed!\n\rNow playing Level " + levelManager.Level);
             clockController.RestartTimer(levelManager.GetPlayMinutesPerLevel(levelManager.Level));
         }
+    }
+
+    private void CalculateSummaryInfo()
+    {
+        //Get summary information
+        float totalRatioOfSuccess = (float)Math.Round((decimal)(scoreManager.CalculateFinalRatioOfSuccess()), 2);
+        float penaltyRatio = (float)Math.Round((decimal)(scoreManager.CalculatePenaltyRatio()), 2);
+        float totalRatioOfSuccessPerc = totalRatioOfSuccess * 100;
+        float penaltyRatioPerc = penaltyRatio * 100;
+        float finalScorePerc = (float)Math.Round((decimal)(totalRatioOfSuccess - totalRatioOfSuccess * penaltyRatio) * 100, 2);
+        uIController.ShowSummaryText(scoreManager.Score, TotalPlayedMinutes, totalRatioOfSuccessPerc, penaltyRatioPerc, finalScorePerc);
     }
 }

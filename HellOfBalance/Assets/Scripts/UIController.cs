@@ -10,11 +10,13 @@ namespace Assets.Scripts
     public class UIController : MonoBehaviour
     {
         public Text targetText;
-        public Text infoText;
         public Text scoreText;
         public Text levelText;
+        public Text gameOverText;
+        public Text summaryText;
         public Image hitImage;
         public Image bodyImage;
+        public Image shader;
         public Sprite legLeftSprite;
         public Sprite rightLegSprite;
         public Sprite tiltLeftSprite;
@@ -23,6 +25,7 @@ namespace Assets.Scripts
         public Color flashColour = new Color(1f, 0f, 0f, 1f);
 
         private string scoreFormat = "Score: {0}\n\rTotal Hazards: {1}\n\rAvoided Hazards: {2}";
+        private string summaryFormat = "Total Points: {0}\n\rTotal Played Minutes: {1}\n\rSuccess Score: {2}%\n\rPenalty Score: {3}%\n\rFinal Score: {4}%";
 
         private void Start()
         {
@@ -65,11 +68,6 @@ namespace Assets.Scripts
             levelText.text = text;
         }
 
-        internal void UpdateInfoText()
-        {
-
-        }
-
         internal void UpdateScoreText(int points, int totalHazards, int avoidedHazards)
         {
             scoreText.text = string.Format(scoreFormat, points, totalHazards, avoidedHazards);
@@ -98,6 +96,12 @@ namespace Assets.Scripts
                     break;
             }
             bodyImage.SetNativeSize();
+        }
+
+        internal void ShowSummaryText(int score, int totalPlayedMinutes, float totalRatioOfSuccessPerc, float penaltyRatioPerc, float finalScorePerc)
+        {
+            string summaryInfo = string.Format(summaryFormat, score, totalPlayedMinutes, totalRatioOfSuccessPerc, penaltyRatioPerc, finalScorePerc);
+            summaryText.text = summaryInfo;
         }
     }
 }

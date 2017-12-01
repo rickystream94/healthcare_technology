@@ -9,12 +9,14 @@ public class EnemyController : MonoBehaviour
 
     public UIController uIController;
     public PlayerController playerController;
+    public GameController gameController;
     public float fireRate;
     public float enemyMovingRate;
     public GameObject[] hazards;
     public int hazardsPerWave;
     public float playerRestTime;
     public float enemySpeed;
+    public bool isTestModeOn;
     public float PlayerActiveSeconds { get; set; }
     public const string LEG_RIGHT = "LEG_RIGHT";
     public const string LEG_LEFT = "LEG_LEFT";
@@ -32,6 +34,7 @@ public class EnemyController : MonoBehaviour
     private bool hasWaitingTime;
     private Vector3 currentDirection;
     private float currentWaitingTime;
+    private bool playerIsTracked;
 
     // Use this for initialization
     void Start()
@@ -45,7 +48,6 @@ public class EnemyController : MonoBehaviour
         hasWaitingTime = false;
         currentWaitingTime = 0f;
         currentDirection = Vector3.left;
-
         StartCoroutine(SpawnHazards());
     }
 
@@ -68,7 +70,8 @@ public class EnemyController : MonoBehaviour
         {
             for (int i = 0; i < hazardsPerWave; i++)
             {
-                if (!isMoving && Target != null /*&& playerController.IsPlayerTracked()*/) //TODO: remove comment to play with kinect
+                playerIsTracked = isTestModeOn ? true : playerController.IsPlayerTracked();
+                if (gameController.IsGamePlaying && !isMoving && Target != null && playerIsTracked)
                     Fire();
                 yield return new WaitForSeconds(fireRate);
             }

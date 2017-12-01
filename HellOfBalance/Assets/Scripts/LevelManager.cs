@@ -14,7 +14,7 @@ namespace Assets.Scripts
         private Dictionary<int, int> maxAttemptsPerLevel;
         private Dictionary<int, float> penaltyWeightPerLevel;
         private Dictionary<int, int> activeSecondsPerLevel;
-        private const int MAX_LEVEL = 3;
+        private const int MAX_LEVEL = 3; //3
 
         public LevelManager()
         {
@@ -27,9 +27,9 @@ namespace Assets.Scripts
             maxAttemptsPerLevel = new Dictionary<int, int>();
             penaltyWeightPerLevel = new Dictionary<int, float>();
             activeSecondsPerLevel = new Dictionary<int, int>();
-            playMinutesPerLevel.Add(1, 1);
-            playMinutesPerLevel.Add(2, 8);
-            playMinutesPerLevel.Add(3, 10);
+            playMinutesPerLevel.Add(1, 1); //5'
+            playMinutesPerLevel.Add(2, 1); //8'
+            playMinutesPerLevel.Add(3, 1); //10'
             maxAttemptsPerLevel.Add(1, 5);
             maxAttemptsPerLevel.Add(2, 3);
             maxAttemptsPerLevel.Add(3, 2);
@@ -77,6 +77,14 @@ namespace Assets.Scripts
             if (activeSecondsPerLevel.TryGetValue(level, out value))
                 return value;
             return 0;
+        }
+
+        public float GetPenaltyWeightPerLevel(int level)
+        {
+            float value;
+            if (penaltyWeightPerLevel.TryGetValue(level, out value))
+                return value;
+            return 0f;
         }
 
         public bool IsMaxLevelReached()
