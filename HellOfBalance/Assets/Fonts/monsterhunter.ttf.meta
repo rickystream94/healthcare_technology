@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: ac4d0820dd05e0a4fa9bc3098fcde45e
+timeCreated: 1511969897
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Monster Hunter
+  fontNames:
+  - Monster Hunter
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

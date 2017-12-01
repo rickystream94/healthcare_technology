@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 2958e244985994e4d9f2c13ac137344d
+timeCreated: 1511969776
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Friday13
+  fontNames:
+  - Friday13
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
